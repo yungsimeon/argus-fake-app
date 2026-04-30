@@ -1,5 +1,8 @@
+import "./globals.css";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "PaperWorks — AI invoices for tiny businesses",
@@ -36,16 +39,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </noscript>
       </head>
-      <body
-        style={{
-          fontFamily: "system-ui, sans-serif",
-          margin: 0,
-          padding: 0,
-          background: "#f8fafc",
-          color: "#0f172a",
-        }}
-      >
-        {children}
+      <body className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

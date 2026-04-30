@@ -23,16 +23,9 @@ export default function GenerateButton({ userPlan }: Props) {
   return (
     <button
       onClick={handleGenerate}
-      style={{
-        background: "#4f46e5",
-        color: "white",
-        padding: "8px 16px",
-        borderRadius: 6,
-        border: "none",
-        cursor: "pointer",
-      }}
+      className="rounded-lg border border-slate-300 hover:border-slate-400 text-slate-900 text-sm font-medium px-4 py-2 transition"
     >
-      Bulk-generate (Pro)
+      Bulk-generate
     </button>
   );
 }

@@ -10,7 +10,7 @@ export default function ExportButton({ userPlan }: Props) {
   async function handleExport() {
     const r = await fetch("/api/export-pdf", { method: "POST" });
     if (r.status === 402) {
-      window.location.href = "/checkout";
+      window.location.href = "/pricing";
       return;
     }
     const data = (await r.json()) as { download_url?: string };
@@ -22,16 +22,14 @@ export default function ExportButton({ userPlan }: Props) {
       onClick={handleExport}
       disabled={!isPro}
       title={isPro ? "Export to PDF" : "Pro plan required"}
-      style={{
-        background: isPro ? "#4f46e5" : "#cbd5e1",
-        color: "white",
-        padding: "8px 16px",
-        borderRadius: 6,
-        border: "none",
-        cursor: isPro ? "pointer" : "not-allowed",
-      }}
+      className={
+        "rounded-lg text-sm font-medium px-4 py-2 transition " +
+        (isPro
+          ? "bg-brand-600 hover:bg-brand-700 text-white"
+          : "bg-slate-200 text-slate-500 cursor-not-allowed")
+      }
     >
-      {isPro ? "Export PDF" : "Export PDF (Pro only)"}
+      {isPro ? "Export PDF" : "Export PDF (Pro)"}
     </button>
   );
 }

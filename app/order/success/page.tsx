@@ -8,6 +8,7 @@ export default function OrderSuccessPage({
   searchParams: { session_id?: string };
 }) {
   const sessionId = searchParams.session_id ?? "";
+  const sessionPreview = sessionId ? sessionId.slice(0, 16) + "…" : "—";
 
   useEffect(() => {
     // Fire Meta Pixel Purchase event — this is the conversion signal that ad
@@ -24,33 +25,39 @@ export default function OrderSuccessPage({
   }, [sessionId]);
 
   return (
-    <main
-      style={{
-        maxWidth: 480,
-        margin: "120px auto",
-        padding: "0 24px",
-        textAlign: "center",
-      }}
-    >
-      <h1>You're in. Welcome to Pro.</h1>
-      <p style={{ color: "#475569", marginTop: 16 }}>
+    <section className="mx-auto max-w-xl px-6 py-24 text-center">
+      <div className="inline-grid place-items-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto">
+        <span className="text-3xl leading-none">✓</span>
+      </div>
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight">
+        Welcome to Pro.
+      </h1>
+      <p className="mt-3 text-slate-600">
         We just emailed your receipt. Bulk export and PDF unlock are now active
         on your account.
       </p>
+
+      <dl className="mt-10 mx-auto max-w-sm text-left rounded-2xl border border-slate-200 bg-white p-6 text-sm divide-y divide-slate-100">
+        <div className="flex justify-between py-2">
+          <dt className="text-slate-500">Order</dt>
+          <dd className="font-mono text-slate-900">{sessionPreview}</dd>
+        </div>
+        <div className="flex justify-between py-2">
+          <dt className="text-slate-500">Plan</dt>
+          <dd className="text-slate-900 font-medium">PaperWorks Pro</dd>
+        </div>
+        <div className="flex justify-between py-2">
+          <dt className="text-slate-500">Charged</dt>
+          <dd className="text-slate-900 font-medium">$19.00 / mo</dd>
+        </div>
+      </dl>
+
       <a
         href="/dashboard"
-        style={{
-          display: "inline-block",
-          marginTop: 32,
-          background: "#4f46e5",
-          color: "white",
-          padding: "12px 24px",
-          borderRadius: 8,
-          textDecoration: "none",
-        }}
+        className="inline-block mt-10 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3"
       >
         Go to dashboard
       </a>
-    </main>
+    </section>
   );
 }
