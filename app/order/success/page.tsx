@@ -11,32 +11,31 @@ export default function OrderSuccessPage({
   const sessionPreview = sessionId ? sessionId.slice(0, 16) + "…" : "—";
   const [verifying, setVerifying] = useState(Boolean(sessionId));
 
-  // Verify the Stripe session and flip the cookie BEFORE we confirm the
-  // purchase to the user. If verification fails we still render the page
-  // (the user might have hit it directly), but their plan stays free.
+  // Run the post-checkout side effects in one place: verify the Stripe
+  // session (which flips the user's plan cookie), and only fire the Meta
+  // Pixel Purchase event once verification has confirmed the payment.
+  // Promise.all keeps the side effects in lockstep so we don't fire a
+  // Purchase event for a session that turned out not to be paid.
   useEffect(() => {
     if (!sessionId) return;
-    fetch("/api/checkout/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    })
-      .catch(() => {/* swallow — the demo can still render */})
+    Promise.all([
+      fetch("/api/checkout/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      }),
+    ])
+      .then(() => {
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq("track", "Purchase", {
+            value: 19,
+            currency: "USD",
+            content_name: "PaperWorks Pro",
+            order_id: sessionId,
+          });
+        }
+      })
       .finally(() => setVerifying(false));
-  }, [sessionId]);
-
-  // Fire Meta Pixel Purchase event — this is the conversion signal that ad
-  // attribution depends on. If this doesn't run, we lose ROAS data and the
-  // ads team is flying blind.
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Purchase", {
-        value: 19,
-        currency: "USD",
-        content_name: "PaperWorks Pro",
-        order_id: sessionId,
-      });
-    }
   }, [sessionId]);
 
   return (
