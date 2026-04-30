@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function OrderSuccessPage({
   searchParams,
@@ -9,11 +9,26 @@ export default function OrderSuccessPage({
 }) {
   const sessionId = searchParams.session_id ?? "";
   const sessionPreview = sessionId ? sessionId.slice(0, 16) + "…" : "—";
+  const [verifying, setVerifying] = useState(Boolean(sessionId));
 
+  // Verify the Stripe session and flip the cookie BEFORE we confirm the
+  // purchase to the user. If verification fails we still render the page
+  // (the user might have hit it directly), but their plan stays free.
   useEffect(() => {
-    // Fire Meta Pixel Purchase event — this is the conversion signal that ad
-    // attribution depends on. If this doesn't run, we lose ROAS data and the
-    // ads team is flying blind.
+    if (!sessionId) return;
+    fetch("/api/checkout/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId }),
+    })
+      .catch(() => {/* swallow — the demo can still render */})
+      .finally(() => setVerifying(false));
+  }, [sessionId]);
+
+  // Fire Meta Pixel Purchase event — this is the conversion signal that ad
+  // attribution depends on. If this doesn't run, we lose ROAS data and the
+  // ads team is flying blind.
+  useEffect(() => {
     if (typeof window !== "undefined" && window.fbq) {
       window.fbq("track", "Purchase", {
         value: 19,
@@ -33,8 +48,9 @@ export default function OrderSuccessPage({
         Welcome to Pro.
       </h1>
       <p className="mt-3 text-slate-600">
-        We just emailed your receipt. Bulk export and PDF unlock are now active
-        on your account.
+        {verifying
+          ? "Activating your plan…"
+          : "We just emailed your receipt. Bulk export and PDF unlock are now active on your account."}
       </p>
 
       <dl className="mt-10 mx-auto max-w-sm text-left rounded-2xl border border-slate-200 bg-white p-6 text-sm divide-y divide-slate-100">
