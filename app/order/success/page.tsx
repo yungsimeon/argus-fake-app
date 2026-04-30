@@ -37,7 +37,7 @@ export default function OrderSuccessPage({
       })
       .finally(() => setVerifying(false));
   }, [sessionId]);
-
+  //
   return (
     <section className="mx-auto max-w-xl px-6 py-24 text-center">
       <div className="inline-grid place-items-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto">
