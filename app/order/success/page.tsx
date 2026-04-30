@@ -11,32 +11,31 @@ export default function OrderSuccessPage({
   const sessionPreview = sessionId ? sessionId.slice(0, 16) + "…" : "—";
   const [verifying, setVerifying] = useState(Boolean(sessionId));
 
-  // Verify the Stripe session and flip the user_plan cookie. Independent
-  // of any tracking — the verification can fail without affecting other
-  // side effects.
+  // Run the post-checkout side effects in one place: verify the Stripe
+  // session (which flips the user's plan cookie), and only fire the Meta
+  // Pixel Purchase event once verification has confirmed the payment.
+  // Promise.all keeps the side effects in lockstep so we don't fire a
+  // Purchase event for a session that turned out not to be paid.
   useEffect(() => {
     if (!sessionId) return;
-    fetch("/api/checkout/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    })
-      .catch(() => {/* swallow — page can still render */})
+    Promise.all([
+      fetch("/api/checkout/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      }),
+    ])
+      .then(() => {
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq("track", "Purchase", {
+            value: 19,
+            currency: "USD",
+            content_name: "PaperWorks Pro",
+            order_id: sessionId,
+          });
+        }
+      })
       .finally(() => setVerifying(false));
-  }, [sessionId]);
-
-  // Fire Meta Pixel Purchase event — independent of verify. The Stripe
-  // payment is the source of truth; if our own verify endpoint hiccups
-  // we still want Meta to record the conversion.
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Purchase", {
-        value: 19,
-        currency: "USD",
-        content_name: "PaperWorks Pro",
-        order_id: sessionId,
-      });
-    }
   }, [sessionId]);
 
   return (
