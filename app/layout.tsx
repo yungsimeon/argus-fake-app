@@ -16,6 +16,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/*
+          The Pixel loader runs on every page so window.fbq is defined,
+          but we deliberately do NOT auto-fire PageView here. The only
+          Pixel event in this app is Purchase, fired from /order/success
+          after a confirmed Stripe checkout.
+        */}
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -26,18 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
           fbq('init', '${PIXEL_ID}');
-          fbq('track', 'PageView');
         `}</Script>
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
-            alt=""
-          />
-        </noscript>
       </head>
       <body className="min-h-screen flex flex-col">
         <Navbar />

@@ -18,19 +18,6 @@ const PRO_FEATURES = [
 ];
 
 export default function PricingPage() {
-  function trackProLead() {
-    // Pricing-page Lead event — fires the moment a visitor commits to the
-    // Pro plan but BEFORE the checkout session opens. Used by Meta to model
-    // intent-to-buy ahead of actual conversion.
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Lead", {
-        content_name: "PaperWorks Pro",
-        value: 19,
-        currency: "USD",
-      });
-    }
-  }
-
   return (
     <section className="mx-auto max-w-5xl px-6 py-24">
       <div className="text-center max-w-2xl mx-auto">
@@ -78,7 +65,6 @@ export default function PricingPage() {
           </p>
           <Link
             href="/checkout"
-            onClick={trackProLead}
             className="mt-6 block rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 text-center"
           >
             Start 7-day trial

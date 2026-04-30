@@ -27,16 +27,6 @@ const TESTIMONIALS = [
 ];
 
 export default function HomePage() {
-  function trackBuyClick() {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "AddToCart", {
-        content_name: "PaperWorks Pro",
-        value: 19,
-        currency: "USD",
-      });
-    }
-  }
-
   return (
     <>
       {/* Hero */}
@@ -55,7 +45,6 @@ export default function HomePage() {
         <div className="mt-10 flex items-center justify-center gap-3">
           <Link
             href="/checkout"
-            onClick={trackBuyClick}
             className="rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 transition"
           >
             Buy Pro · $19/mo
