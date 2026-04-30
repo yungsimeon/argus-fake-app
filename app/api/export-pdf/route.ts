@@ -8,25 +8,19 @@ interface InvoiceLine {
 }
 
 const INVOICE_LINES: InvoiceLine[] = [
-  { description: "Strategy + planning",        hours: 4, rate: 200 },
-  { description: "Implementation sprint",      hours: 16, rate: 175 },
-  { description: "QA + handover",              hours: 4, rate: 150 },
+  { description: "Strategy + planning", hours: 4, rate: 200 },
+  { description: "Implementation sprint", hours: 16, rate: 175 },
+  { description: "QA + handover", hours: 4, rate: 150 },
 ];
 
 export async function POST(): Promise<NextResponse> {
   const user = getUser();
   if (!requirePlan("pro", user)) {
-    return NextResponse.json(
-      { error: "Pro plan required" },
-      { status: 402 },
-    );
+    return NextResponse.json({ error: "Pro plan required" }, { status: 402 });
   }
 
-  const subtotal = INVOICE_LINES.reduce(
-    (s, l) => s + l.hours * l.rate,
-    0,
-  );
-  const tax = Math.round(subtotal * 0.0);   // Solo founder, registered exempt
+  const subtotal = INVOICE_LINES.reduce((s, l) => s + l.hours * l.rate, 0);
+  const tax = Math.round(subtotal * 0.0); // Solo founder, registered exempt
   const total = subtotal + tax;
 
   const number = `INV-2026-${String(Math.floor(Math.random() * 900) + 100)}`;
