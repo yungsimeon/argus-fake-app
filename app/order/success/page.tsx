@@ -16,27 +16,29 @@ export default function OrderSuccessPage({
   // side effects.
   useEffect(() => {
     if (!sessionId) return;
-    fetch("/api/checkout/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    })
-      .catch(() => {/* swallow — page can still render */})
-      .finally(() => setVerifying(false));
-  }, [sessionId]);
 
-  // Fire Meta Pixel Purchase event — independent of verify. The Stripe
-  // payment is the source of truth; if our own verify endpoint hiccups
-  // we still want Meta to record the conversion.
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Purchase", {
-        value: 19,
-        currency: "USD",
-        content_name: "PaperWorks Pro",
-        order_id: sessionId,
-      });
-    }
+    // Wrap both the fetch and fbq in a single promise flow
+    (async () => {
+      try {
+        await fetch("/api/checkout/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+      } catch {
+        // swallow — page can still render
+      } finally {
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq("track", "Purchase", {
+            value: 19,
+            currency: "USD",
+            content_name: "PaperWorks Pro",
+            order_id: sessionId,
+          });
+        }
+        setVerifying(false);
+      }
+    })();
   }, [sessionId]);
 
   return (
