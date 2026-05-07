@@ -4,12 +4,54 @@ import ExportButton from "@/components/ExportButton";
 import GenerateButton from "@/components/GenerateButton";
 
 const MOCK_INVOICES = [
-  { id: "INV-2026-014", client: "Northwood & Co.", amount: 2_400, status: "Paid",   date: "Apr 24" },
-  { id: "INV-2026-013", client: "Acme Studio",     amount: 1_800, status: "Paid",   date: "Apr 18" },
-  { id: "INV-2026-012", client: "FluffyFox",       amount:   950, status: "Sent",   date: "Apr 12" },
-  { id: "INV-2026-011", client: "Lumen Labs",      amount: 3_600, status: "Paid",   date: "Apr 04" },
-  { id: "INV-2026-010", client: "Westwind",        amount:   400, status: "Draft",  date: "Apr 01" },
+  {
+    id: "INV-2026-014",
+    client: "Northwood & Co.",
+    amount: 2_400,
+    status: "Paid",
+    date: "Apr 24",
+  },
+  {
+    id: "INV-2026-013",
+    client: "Acme Studio",
+    amount: 1_800,
+    status: "Paid",
+    date: "Apr 18",
+  },
+  {
+    id: "INV-2026-012",
+    client: "FluffyFox",
+    amount: 950,
+    status: "Sent",
+    date: "Apr 12",
+  },
+  {
+    id: "INV-2026-011",
+    client: "Lumen Labs",
+    amount: 3_600,
+    status: "Paid",
+    date: "Apr 04",
+  },
+  {
+    id: "INV-2026-010",
+    client: "Westwind",
+    amount: 400,
+    status: "Draft",
+    date: "Apr 01",
+  },
 ];
+
+function getPlanTextClass(plan: "free" | "pro") {
+  return plan === "pro"
+    ? "text-brand-700 font-medium"
+    : "text-slate-700 font-medium";
+}
+
+function getStatusBadgeClass(status: string) {
+  if (status === "Paid") return "bg-emerald-100 text-emerald-700";
+  if (status === "Sent") return "bg-blue-100 text-blue-700";
+  return "bg-slate-100 text-slate-600";
+}
 
 export default function DashboardPage() {
   const user = getUser();
@@ -19,17 +61,11 @@ export default function DashboardPage() {
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
-      <div className="flex items-end justify-between flex-wrap gap-4">
+      <div className="flex items-end justify-between flex-wrap gap-4 rounded-2xl border border-slate-200 bg-white p-6">
         <div>
           <p className="text-sm text-slate-500">
             Signed in as {user.email} · plan{" "}
-            <span
-              className={
-                user.plan === "pro"
-                  ? "text-brand-700 font-medium"
-                  : "text-slate-700 font-medium"
-              }
-            >
+            <span className={getPlanTextClass(user.plan)}>
               {user.plan.toUpperCase()}
             </span>
           </p>
@@ -68,9 +104,7 @@ export default function DashboardPage() {
           <tbody className="divide-y divide-slate-100">
             {MOCK_INVOICES.map((inv) => (
               <tr key={inv.id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 font-mono text-slate-900">
-                  {inv.id}
-                </td>
+                <td className="px-6 py-4 font-mono text-slate-900">{inv.id}</td>
                 <td className="px-6 py-4 text-slate-700">{inv.client}</td>
                 <td className="px-6 py-4 text-slate-500">{inv.date}</td>
                 <td className="px-6 py-4 text-right font-medium">
@@ -80,11 +114,7 @@ export default function DashboardPage() {
                   <span
                     className={
                       "inline-block px-2 py-0.5 rounded text-xs font-medium " +
-                      (inv.status === "Paid"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : inv.status === "Sent"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-slate-100 text-slate-600")
+                      getStatusBadgeClass(inv.status)
                     }
                   >
                     {inv.status}
