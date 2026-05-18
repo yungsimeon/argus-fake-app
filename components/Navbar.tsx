@@ -56,7 +56,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/pricing"
-                className="rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2"
+                className="rounded-full bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-5 py-2"
               >
                 Get started
               </Link>

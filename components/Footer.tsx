@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-slate-200 px-6 py-6 text-center text-xs text-slate-500">
-        © 2026 PaperWorks. Demo app — no real invoices were harmed.
+        © 2026 PaperWorks. Built with care — no real invoices were harmed.
       </div>
     </footer>
   );

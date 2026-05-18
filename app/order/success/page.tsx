@@ -29,14 +29,13 @@ export default function OrderSuccessPage({
   // payment is the source of truth; if our own verify endpoint hiccups
   // we still want Meta to record the conversion.
   useEffect(() => {
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Purchase", {
-        value: 19,
-        currency: "USD",
-        content_name: "PaperWorks Pro",
-        order_id: sessionId,
-      });
-    }
+    if (!sessionId || typeof window === "undefined" || !window.fbq) return;
+    window.fbq("track", "Purchase", {
+      value: 19,
+      currency: "USD",
+      content_name: "PaperWorks Pro",
+      order_id: sessionId,
+    });
   }, [sessionId]);
 
   return (
