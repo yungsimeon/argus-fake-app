@@ -17,10 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         {/*
-          The Pixel loader runs on every page so window.fbq is defined,
-          but we deliberately do NOT auto-fire PageView here. The only
-          Pixel event in this app is Purchase, fired from /order/success
-          after a confirmed Stripe checkout.
+          Standard Meta Pixel bootstrap: init + PageView on every load.
+          AddToCart fires from the landing buy CTA; Purchase from
+          /order/success when a checkout session_id is present.
         */}
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s)
@@ -32,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
           fbq('init', '${PIXEL_ID}');
+          fbq('track', 'PageView');
         `}</Script>
       </head>
       <body className="min-h-screen flex flex-col">

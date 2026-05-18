@@ -46,6 +46,15 @@ export default function HomePage() {
           <Link
             href="/checkout"
             className="rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 transition"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.fbq) {
+                window.fbq("track", "AddToCart", {
+                  value: 19,
+                  currency: "USD",
+                  content_name: "PaperWorks Pro",
+                });
+              }
+            }}
           >
             Buy Pro · $19/mo
           </Link>
